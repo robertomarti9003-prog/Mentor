@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeriatrIAMentor IA — Perfil y Cuidado del Adulto Mayor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #4f46e5;
+    --background: #ffffff;
+    --text: #111827;
+    --bubble-user: #e0e7ff;
+    --bubble-bot: #f9fafb;
+    --shadow: rgba(0, 0, 0, 0.1);
+  }
+  body {font-family:'Inter',sans-serif; background:var(--background); color:var(--text); margin:0; padding:0;}
+  .container{max-width:1200px;margin:30px auto;padding:0 20px;}
+  h1{text-align:center;color:var(--primary);font-size:2rem;margin-bottom:10px;}
+  form{display:grid;gap:20px;}
+  .card{background:#fff;padding:20px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.08);}
+  h3{font-size:1.2rem;color:var(--primary);margin-bottom:10px;border-bottom:2px solid #def2f1;padding-bottom:4px;}
+  label{margin-top:10px;display:block;font-weight:700;}
+  input, select, textarea{width:100%;padding:10px;margin-top:4px;border-radius:8px;border:1px solid #cfeeee;background:#fbffff;font-size:1rem;color:#555;}
+  .btn-container{display:flex;justify-content:center;gap:15px;margin-top:15px;}
+  button{padding:12px 20px;font-weight:600;border-radius:10px;border:none;cursor:pointer;font-size:1rem;transition:0.3s;}
+  #generate{background:var(--primary);color:white;} #generate:hover{background:#3b3bbb;}
+  #resetForm{background:#dc2626;color:white;} /* Botón de Limpiar */
+  #resetForm:hover{background:#b91c1c;}
+  #chatContainer{display:none;flex-direction:column;width:95%;max-width:500px;margin:20px auto;height:70vh;border-radius:20px;box-shadow:0 4px 20px var(--shadow);}
+  .chat-header{background:var(--primary);color:white;padding:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center;}
+  .chat-header button{background: rgba(255,255,255,0.2); border:none; color:white; padding:5px 10px; border-radius:6px; cursor:pointer; font-size:0.8rem;}
+  .chat-box{flex:1;padding:15px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+  .message{padding:10px 15px;border-radius:15px;max-width:80%;line-height:1.4;white-space:pre-wrap;}
+  .user{align-self:flex-end;background:var(--bubble-user);}
+  .bot{align-self:flex-start;background:var(--bubble-bot);}
+  .chat-input{display:flex;padding:10px;border-top:1px solid #d1d5db;}
+  .chat-input input{flex:1;padding:10px;border-radius:10px;border:1px solid #d1d5db;outline:none;}
+  .chat-input button{margin-left:10px;padding:10px 15px;border-radius:10px;background:var(--primary);color:white;border:none;cursor:pointer;}
+  /* Animación Analizando */
+  .dots::after{content:''; animation:dots 1.5s steps(3,end) infinite;}
+  @keyframes dots{0%{content:'';}33%{content:'.';}66%{content:'..';}100%{content:'...';}}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>GeriatrIA Mentor IA — Perfil y Cuidado del Adulto Mayor</h1>
+
+<form id="mentorForm">
+  <div class="card">
+    <h3>Datos del Cuidador</h3>
+    <label for="cuidadorNombre">Nombre</label>
+    <input id="cuidadorNombre" type="text" placeholder="Ej. María López" required/>
+    <label for="cuidadorEdad">Edad</label>
+    <input id="cuidadorEdad" type="number" min="18" placeholder="Ej. 35" required/>
+    <label for="cuidadorExp">Años de experiencia</label>
+    <select id="cuidadorExp" required>
+      <option value="" disabled selected>Selecciona</option>
+      <option value="0">0</option>
+      <option value="1-5">1 a 5</option>
+      <option value="6-10">6 a 10</option>
+      <option value="10+">10 en adelante</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <h3>Datos del Adulto Mayor</h3>
+    <label for="nombre">Nombre</label>
+    <input id="nombre" type="text" placeholder="Ej. Juan Pérez" required/>
+    <label for="edad">Edad</label>
+    <input id="edad" type="number" min="50" placeholder="Ej. 70" required/>
+    <label for="genero">Género</label>
+    <select id="genero" required>
+      <option value="" disabled selected>Selecciona</option>
+      <option value="M">Masculino</option>
+      <option value="F">Femenino</option>
+      <option value="O">Prefiero no decir</option>
+    </select>
+    <label for="estatura">Estatura</label>
+    <input id="estatura" type="text" placeholder="Ej. 1.65 m"/>
+    <label for="peso">Peso</label>
+    <input id="peso" type="text" placeholder="Ej. 75 kg"/>
+    <label for="tipoSangre">Tipo de sangre</label>
+    <input id="tipoSangre" type="text" placeholder="Ej. O+, A-, B+"/>
+    <label for="observacionesPer">Observaciones personales (Intereses, gustos)</label>
+    <textarea id="observacionesPer" rows="2" placeholder="Ej. Le gusta el arte y la música clásica"></textarea>
+  </div>
+
+  <div class="card">
+    <h3>Datos Médicos y Actividades</h3>
+    <label for="vacunas">Vacunas completas</label>
+    <select id="vacunas" required>
+      <option value="" disabled selected>Selecciona</option>
+      <option value="sí">Sí</option>
+      <option value="no">No</option>
+    </select>
+    <label for="agudezaVisual">Agudeza visual</label>
+    <input id="agudezaVisual" type="text" placeholder="Ej. Normal, visión borrosa"/>
+    <label for="dificultadAuditiva">Dificultad auditiva</label>
+    <select id="dificultadAuditiva" required>
+      <option value="no">No</option>
+      <option value="sí">Sí</option>
+    </select>
+    <label for="alergias">Alergias</label>
+    <textarea id="alergias" rows="2" placeholder="Ej. Penicilina, polen"></textarea>
+    <label for="cirugias">Cirugías</label>
+    <textarea id="cirugias" rows="2" placeholder="Ej. Apendicectomía en 2015"></textarea>
+    <label for="discapacidad">Discapacidad o condición</label>
+    <textarea id="discapacidad" rows="2" placeholder="Ej. Movilidad reducida, Alzheimer leve"></textarea>
+    <label for="protesis">Prótesis</label>
+    <textarea id="protesis" rows="2" placeholder="Ej. Audífono en oído derecho, dentadura postiza"></textarea>
+    <label for="enfCronicas">Enfermedades crónicas</label>
+    <textarea id="enfCronicas" rows="2" placeholder="Ej. Diabetes, hipertensión"></textarea>
+    <label for="tratamiento">Tratamiento</label>
+    <textarea id="tratamiento" rows="2" placeholder="Ej. Metformina diaria, aspirina"></textarea>
+    <label for="alimentosReg">Alimentos regulares (Restricciones)</label>
+    <textarea id="alimentosReg" rows="2" placeholder="Ej. Frutas, verduras, poca sal, sin lácteos"></textarea>
+    <label for="aguaDia">Agua diaria (Litros)</label>
+    <input id="aguaDia" type="text" placeholder="Ej. 2 litros"/>
+    <label for="ejercicio">Ejercicio (Tipo y frecuencia)</label>
+    <textarea id="ejercicio" rows="2" placeholder="Ej. Caminata diaria de 30 min, yoga suave"></textarea>
+  </div>
+
+  <div class="btn-container">
+    <button type="submit" id="generate">Enviar Formulario y Generar Plan</button>
+  </div>
+</form>
+
+
+<div id="chatContainer">
+  <div class="chat-header">
+    🧠 Mentor IA
+    <div>
+      <button id="restart">🔄 Nuevo Perfil</button>
+    </div>
+  </div>
+  <div class="chat-box" id="chatMessages"></div>
+  <div class="chat-input">
+    <input id="chatInput" type="text" placeholder="Escribe tu mensaje o pregunta...">
+    <button id="chatSend">Enviar</button>
+  </div>
+</div>
+</div>
+
+<script type="module">
+// Lógica de Frontend: Interacción y manipulación del DOM
+document.getElementById("restart").addEventListener("click",()=>location.reload());
+
+const chatContainer = document.getElementById("chatContainer");
+const chatMessages = document.getElementById("chatMessages");
+const mentorForm = document.getElementById("mentorForm");
+let conversationHistory = [];
+
+function showTyping(){
+  const msg = document.createElement("div");
+  msg.className = "bot message";
+  msg.textContent = "Analizando";
+  const span = document.createElement("span");
+  span.className="dots";
+  msg.appendChild(span);
+  chatMessages.appendChild(msg);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+function removeTyping(){
+  const typing = chatMessages.querySelector(".dots")?.parentElement;
+  if(typing) typing.remove();
+}
+function appendMessage(text,sender="bot"){
+  removeTyping();
+  const msg = document.createElement("div");
+  msg.className = sender+" message";
+  // Usamos innerHTML para permitir que el texto del bot tenga formato
+  msg.innerHTML=text.replace(/\n/g, '<br>'); 
+  chatMessages.appendChild(msg);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// **Función de CONEXIÓN AL BACKEND (Flowise)**
+async function query(data){
+  // **Esta es la conexión a tu backend de IA (Flowise)**
+  const response = await fetch("http://localhost:3000/api/v1/prediction/af5f979f-0a55-42ef-bb6f-2cf9a8f0cc3a",{
+    method:"POST", 
+    headers:{"Content-Type":"application/json"}, 
+    body:JSON.stringify(data)
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Error en la API: ${response.status} ${response.statusText}`);
+  }
+  return await response.json();
+}
+
+// Lógica de Frontend: Envío de datos y llamada al Backend
+document.getElementById("generate").addEventListener("click",async(e)=>{
+  e.preventDefault();
+
+  // Validar si el formulario es válido (HTML5 required)
+  if(!mentorForm.checkValidity()){
+    mentorForm.reportValidity();
+    return;
+  }
+  
+  // Recolección de datos
+  const data = {
+    cuidadorNombre: document.getElementById('cuidadorNombre').value,
+    cuidadorEdad: document.getElementById('cuidadorEdad').value,
+    cuidadorExp: document.getElementById('cuidadorExp').value,
+    nombre: document.getElementById('nombre').value,
+    edad: document.getElementById('edad').value,
+    genero: document.getElementById('genero').value,
+    estatura: document.getElementById('estatura').value,
+    peso: document.getElementById('peso').value,
+    tipoSangre: document.getElementById('tipoSangre').value,
+    observacionesPer: document.getElementById('observacionesPer').value,
+    vacunas: document.getElementById('vacunas').value,
+    agudezaVisual: document.getElementById('agudezaVisual').value,
+    dificultadAuditiva: document.getElementById('dificultadAuditiva').value,
+    alergias: document.getElementById('alergias').value,
+    cirugias: document.getElementById('cirugias').value,
+    discapacidad: document.getElementById('discapacidad').value,
+    protesis: document.getElementById('protesis').value,
+    enfCronicas: document.getElementById('enfCronicas').value,
+    tratamiento: document.getElementById('tratamiento').value,
+    alimentosReg: document.getElementById('alimentosReg').value,
+    aguaDia: document.getElementById('aguaDia').value,
+    ejercicio: document.getElementById('ejercicio').value
+  };
+
+  // Transición a la interfaz de chat (Frontend)
+  mentorForm.style.display="none";
+  chatContainer.style.display="flex";
+  showTyping();
+
+  // Crear el prompt inicial para la IA
+  const initialPrompt = `Genera un plan de aprendizaje personalizado (como mentor de cuidado) basado en estos datos del adulto mayor y del cuidador: ${JSON.stringify(data,null,2)}`;
+  
+  conversationHistory.push({role:"user",content:initialPrompt});
+
+  try{
+    // Llama al Backend (Flowise)
+    const result = await query({question:initialPrompt,conversationHistory});
+    conversationHistory.push({role:"bot",content:result.text});
+    appendMessage(result.text);
+  }catch(err){
+    console.error(err);
+    appendMessage("🚫 **Error de Conexión (Flowise):** No se pudo obtener el plan. Asegúrate de que el servidor esté corriendo en **http://localhost:3000** y que el *endpoint* sea correcto.");
+  }
+});
+
+// Lógica de Frontend: Envío de mensajes de chat y llamada al Backend
+document.getElementById("chatSend").addEventListener("click",async()=>{
+  const input = document.getElementById("chatInput");
+  const userMessage = input.value.trim();
+  if(!userMessage) return;
+
+  appendMessage(userMessage,"user");
+  conversationHistory.push({role:"user",content:userMessage});
+  input.value="";
+  showTyping();
+
+  try{
+    // Llama al Backend (Flowise)
+    const result = await query({question:userMessage,conversationHistory});
+    conversationHistory.push({role:"bot",content:result.text});
+    appendMessage(result.text);
+  }catch(err){
+    console.error(err);
+    appendMessage("🚫 **Error de Conexión (Flowise):** No se pudo obtener la respuesta del Mentor IA.");
+  }
+});
+
+</script>
+</body>
+</html>
+```
